@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block titulo %}Veículos disponíveis — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Veículos disponíveis{% endblock %}
+{% block migalhas %}<li>Veículos disponíveis</li>{% endblock %}
+
+{% block conteudo %}
+<!-- car-search-section start -->
+<section class="car-search-section pt-120 pb-120">
+<div class="container">
+
+<!-- Formulário de pesquisa e filtros (Fase 3) -->
+<div class="row mb-4">
+<div class="col-lg-12">
+<form class="pesquisa-veiculos-form" method="get" action="{{ url_for('lista_veiculos') }}">
+<div class="row">
+
+<div class="col-md-4 col-12">
+<div class="frm-group">
+<label for="pesquisa">Marca ou modelo</label>
+<input id="pesquisa" name="pesquisa" type="text" placeholder="Ex.: Audi, Golf..." value="{{ filtros.pesquisa }}"/>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="categoria">Categoria</label>
+<select id="categoria" name="categoria">
+<option value="">Todas</option>
+{% for categoria in categorias %}
+<option value="{{ categoria }}" {% if filtros.categoria == categoria %}selected{% endif %}>{{ categoria }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="tipo_veiculo">Tipo</label>
+<select id="tipo_veiculo" name="tipo_veiculo">
+<option value="">Todos</option>
+{% for tipo in tipos_veiculos %}
+<option value="{{ tipo }}" {% if filtros.tipo_veiculo == tipo %}selected{% endif %}>{{ tipo }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="transmissao">Transmissão</label>
+<select id="transmissao" name="transmissao">
+<option value="">Todas</option>
+{% for transmissao in transmissoes %}
+<option value="{{ transmissao }}" {% if filtros.transmissao == transmissao %}selected{% endif %}>{{ transmissao }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="pessoas">N.º de pessoas</label>
+<select id="pessoas" name="pessoas">
+<option value="">Todas</option>
+{% for codigo_faixa, faixa in faixas_pessoas.items() %}
+<option value="{{ codigo_faixa }}" {% if filtros.pessoas == codigo_faixa %}selected{% endif %}>{{ faixa[0] }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="valor_min">Diária desde (€)</label>
+<input id="valor_min" name="valor_min" type="number" min="0" step="0.01" placeholder="Ex.: 20" value="{{ filtros.valor_min }}"/>
+</div>
+</div>
+
+<div class="col-md-2 col-6">
+<div class="frm-group">
+<label for="valor_max">Diária até (€)</label>
+<input id="valor_max" name="valor_max" type="number" min="0" step="0.01" placeholder="Ex.: 80" value="{{ filtros.valor_max }}"/>
+</div>
+</div>
+
+<div class="col-md-2 col-6 d-flex align-items-end">
+<div class="frm-group w-100">
+<input type="submit" value="pesquisar"/>
+</div>
+</div>
+
+<div class="col-md-2 col-6 d-flex align-items-end">
+<a class="frm-group w-100 text-center" href="{{ url_for('lista_veiculos') }}">limpar filtros</a>
+</div>
+
+</div>
+</form>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-12">
+<p class="mb-4">
+Encontrámos <strong>{{ veiculos|length }}</strong> {% if veiculos|length == 1 %}veículo disponível{% else %}veículos disponíveis{% endif %} para os critérios escolhidos,
+ordenados pelo valor da diária (do mais barato ao mais caro).
+</p>
+</div>
+</div>
+<div class="row mb-none-30">
+{% for veiculo in veiculos %}
+<div class="col-md-6 col-lg-4 col-12">
+<div class="car-item">
+<!-- Imagem como <img> (corrigido na Fase 5): antes usava-se uma imagem de
+     fundo num <div class="bg_img">, que o main.js do tema apagava por não ter
+     o atributo data-background; com <img>, todas as fotos ficam com a mesma
+     altura através do CSS do projeto (luxury_wheels.css). -->
+<div class="thumb">
+<img src="{{ url_for('static', filename='images/' ~ veiculo.imagem) }}" alt="{{ veiculo.marca }} {{ veiculo.modelo }}"/>
+</div>
+<div class="car-item-body">
+<div class="content">
+<h4 class="title">{{ veiculo.marca }} {{ veiculo.modelo }}</h4>
+<span class="price">{{ "%.2f"|format(veiculo.valor_diaria) }} € por dia</span>
+</div>
+<div class="car-item-meta">
+<ul class="details-list">
+<li><i class="fa fa-car"></i>{{ veiculo.categoria }} · {{ veiculo.tipo_veiculo }}</li>
+<li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
+<li><i class="fa fa-users"></i>Até {{ veiculo.quantidade_pessoas }} pessoas</li>
+</ul>
+</div>
+<!-- Pesquisar é público; reservar exige sessão iniciada (se o cliente não
+     tiver sessão, é enviado para o login e depois volta a esta reserva) -->
+<a class="cmn-btn mt-3" href="{{ url_for('efetuar_aluguer', id_veiculo=veiculo.id_veiculo) }}">Efetuar aluguer</a>
+</div>
+</div>
+</div>
+{% else %}
+<div class="col-12">
+<p>Não foi encontrado nenhum veículo disponível com os critérios escolhidos.</p>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+<!-- car-search-section end -->
+{% endblock %}

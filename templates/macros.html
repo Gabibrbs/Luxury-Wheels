@@ -1,0 +1,68 @@
+{#
+  Macros Jinja2 reutilizáveis (funcionam como "funções" para templates).
+  Para usar numa página:
+      {% from "macros.html" import campo_password %}
+      {{ campo_password("password", "Password") }}
+#}
+
+{#
+  Campo de password com o botão "olho" para mostrar/esconder o texto.
+  O comportamento do botão está em assets/js/luxury_wheels.js e o aspeto
+  em assets/css/luxury_wheels.css.
+    - nome_campo: valor dos atributos id e name do <input>
+    - texto_ajuda: texto mostrado dentro do campo vazio (placeholder)
+    - foco_automatico: se True, o cursor começa neste campo
+#}
+{% macro campo_password(nome_campo, texto_ajuda, foco_automatico=False) %}
+<div class="frm-group campo-password">
+<input id="{{ nome_campo }}" name="{{ nome_campo }}" placeholder="{{ texto_ajuda }}" type="password" required{% if foco_automatico %} autofocus{% endif %}/>
+<button type="button" class="botao-mostrar-password" aria-label="Mostrar password" title="Mostrar password">
+<i class="fa fa-eye"></i>
+</button>
+</div>
+{% endmacro %}
+
+{#
+  Escolha da forma de pagamento: os cartões já usados pelo cliente (botões
+  de opção) ou um cartão novo, com os campos número, titular e CVV.
+  Usada na página de pagamento (Fase 4) e no pagamento da diferença ao
+  alterar as datas de uma reserva (Fase 5).
+    - formas_pagamento: cartões já guardados do cliente
+    - escolha_pagamento: opção que aparece escolhida ("novo" ou o id de um cartão)
+    - nome_titular: nome já escrito (volta a aparecer se houver um erro)
+    - guardar_cartao: se a caixa "Guardar este cartão" aparece marcada (por defeito, não)
+#}
+{% macro escolha_cartao(formas_pagamento, escolha_pagamento, nome_titular, guardar_cartao=False) %}
+<!-- Os dados do cartão novo só aparecem quando "Usar um cartão novo" está
+     escolhido — feito só com CSS (ver .escolha-cartao em luxury_wheels.css) -->
+<div class="escolha-cartao">
+{% for forma in formas_pagamento %}
+<div class="frm-group opcao-pagamento">
+<input id="forma_{{ forma.id_forma_pagamento }}" name="forma_pagamento" type="radio" value="{{ forma.id_forma_pagamento }}" {% if escolha_pagamento == forma.id_forma_pagamento|string %}checked{% endif %}/>
+<label for="forma_{{ forma.id_forma_pagamento }}">Cartão terminado em {{ forma.ultimos_digitos }} ({{ forma.nome_titular }})</label>
+</div>
+{% endfor %}
+<div class="frm-group opcao-pagamento">
+<input id="forma_novo" name="forma_pagamento" type="radio" value="novo" {% if escolha_pagamento == "novo" %}checked{% endif %}/>
+<label for="forma_novo">Usar um cartão novo</label>
+</div>
+
+<fieldset class="mt-3 dados-cartao-novo">
+<legend class="h6">Dados do cartão novo</legend>
+<div class="frm-group">
+<input id="numero_cartao" name="numero_cartao" type="text" inputmode="numeric" maxlength="19" placeholder="Número do cartão (16 algarismos)" autocomplete="off"/>
+</div>
+<div class="frm-group">
+<input id="nome_titular" name="nome_titular" type="text" placeholder="Nome do titular, tal como aparece no cartão" value="{{ nome_titular }}"/>
+</div>
+<div class="frm-group">
+<input id="codigo_seguranca" name="codigo_seguranca" type="text" inputmode="numeric" maxlength="3" placeholder="Código de segurança (CVV)" autocomplete="off"/>
+</div>
+<div class="frm-group">
+<input id="guardar_cartao" name="guardar_cartao" type="checkbox" value="sim" {% if guardar_cartao %}checked{% endif %}/>
+<label for="guardar_cartao">Guardar este cartão para próximas reservas</label>
+</div>
+<p class="small">Por segurança, só guardamos os últimos 4 algarismos do cartão; o código de segurança nunca é guardado.</p>
+</fieldset>
+</div>
+{% endmacro %}

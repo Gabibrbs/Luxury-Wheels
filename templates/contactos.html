@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block titulo %}Contactos — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Contacte-nos{% endblock %}
+{% block migalhas %}<li>Contactos</li>{% endblock %}
+
+{% block conteudo %}
+<!-- contact-section start (baseada no contact.html do template; as classes
+     "contacto-*" do template foram corrigidas para "contact-*", os nomes que
+     o CSS do tema realmente usa) -->
+<section class="contact-section pt-120 pb-120">
+<div class="container">
+<div class="row">
+<div class="col-lg-4">
+<div class="contact-item text-center">
+<div class="icon"><i class="fa fa-home"></i></div>
+<div class="content">
+<h4 class="title">balcões</h4>
+{% for balcao in balcoes %}
+<p><strong>{{ balcao.nome }}</strong><br/>{{ balcao.morada }}</p>
+{% endfor %}
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="contact-item text-center">
+<div class="icon"><i class="fa fa-phone"></i></div>
+<div class="content">
+<h4 class="title">telefone</h4>
+<p>+351 999 999 999<br/>Todos os dias, das 08:00 às 20:00</p>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="contact-item text-center">
+<div class="icon"><i class="fa fa-envelope-o"></i></div>
+<div class="content">
+<h4 class="title">e-mail</h4>
+<p>geral@luxurywheels.pt</p>
+<p>Alugueres com mais de {{ duracao_maxima }} dias: fale connosco para um contrato especial.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-12">
+<div class="contact-form-area">
+<h3 class="title">enviar mensagem</h3>
+<form class="contact-form" method="post" action="{{ url_for('pagina_contactos') }}">
+<div class="row">
+<div class="col-lg-6">
+<div class="frm-group">
+<input id="nome" name="nome" placeholder="Nome*" type="text" value="{{ nome }}" required/>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="frm-group">
+<input id="email" name="email" placeholder="E-mail*" type="email" value="{{ email }}" required/>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="frm-group">
+<textarea id="mensagem" name="mensagem" placeholder="Escreva a sua mensagem*" required>{{ mensagem }}</textarea>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="frm-group">
+<input type="submit" value="enviar mensagem"/>
+</div>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- contact-section end -->
+{% endblock %}

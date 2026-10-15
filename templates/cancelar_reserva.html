@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cancelar reserva n.º {{ reserva.id_reserva }} — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Cancelar reserva{% endblock %}
+{% block migalhas %}<li><a href="{{ url_for('lista_reservas') }}">As minhas reservas</a></li><li>Reserva n.º {{ reserva.id_reserva }}</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<h3 class="mb-4">Tem a certeza de que quer cancelar esta reserva?</h3>
+<table class="table">
+<tr><th>Reserva</th><td>n.º {{ reserva.id_reserva }}</td></tr>
+<tr><th>Veículo</th><td>{{ reserva.marca }} {{ reserva.modelo }}</td></tr>
+<tr><th>Levantamento</th><td>{{ reserva.data_inicio|data_pt }} às {{ reserva.hora_levantamento }} — {{ reserva.nome_balcao_levantamento }}</td></tr>
+<tr><th>Entrega</th><td>{{ reserva.data_fim|data_pt }} às {{ reserva.hora_entrega }} — {{ reserva.nome_balcao_entrega }} ({{ numero_dias }} dia(s))</td></tr>
+{% if extras %}<tr><th>Extras</th><td>{% for extra in extras %}{{ extra.nome }}{% if not loop.last %}, {% endif %}{% endfor %}</td></tr>{% endif %}
+<tr><th>Valor pago</th><td>{{ "%.2f"|format(reserva.valor_total) }} €</td></tr>
+</table>
+
+<p><strong>Reembolso total</strong> — cada cartão recebe o que pagou:</p>
+<ul>
+{% for reembolso in reembolsos %}
+<li>{{ "%.2f"|format(reembolso.valor) }} € para o cartão terminado em {{ reembolso.ultimos_digitos }}</li>
+{% endfor %}
+</ul>
+<p class="small">Depois de cancelada, a reserva não pode ser reativada e as datas ficam livres para outros clientes.</p>
+
+<form method="post" action="{{ url_for('cancelar_reserva', id_reserva=reserva.id_reserva) }}">
+<div class="frm-group">
+<input type="submit" value="sim, cancelar a reserva"/>
+</div>
+</form>
+<p class="mt-3"><a href="{{ url_for('lista_reservas') }}">&larr; Não, voltar às minhas reservas</a></p>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

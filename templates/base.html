@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+<title>{% block titulo %}Luxury Wheels{% endblock %}</title>
+<!-- fontawesome css link -->
+<link href="{{ url_for('static', filename='css/fontawesome.min.css') }}" rel="stylesheet"/>
+<!-- bootstrap css link -->
+<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet"/>
+<!-- lightcase css link -->
+<link href="{{ url_for('static', filename='css/lightcase.css') }}" rel="stylesheet"/>
+<!-- animate css link -->
+<link href="{{ url_for('static', filename='css/animate.css') }}" rel="stylesheet"/>
+<!-- nice select css link -->
+<link href="{{ url_for('static', filename='css/nice-select.css') }}" rel="stylesheet"/>
+<!-- datepicker css link -->
+<link href="{{ url_for('static', filename='css/datepicker.min.css') }}" rel="stylesheet"/>
+<!-- wickedpicker css link -->
+<link href="{{ url_for('static', filename='css/wickedpicker.min.css') }}" rel="stylesheet"/>
+<!-- jquery ui css link -->
+<link href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" rel="stylesheet"/>
+<!-- owl carousel css link -->
+<link href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" rel="stylesheet"/>
+<!-- main style css link -->
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet"/>
+<!-- estilos próprios do projeto (acrescentados ao tema original) -->
+<link href="{{ url_for('static', filename='css/luxury_wheels.css') }}" rel="stylesheet"/>
+{% block estilos_extra %}{% endblock %}
+</head>
+<body>
+<!-- header-section start -->
+<header class="header-section header-section--style2">
+<div class="header-bottom">
+<div class="container">
+<nav class="navbar navbar-expand-lg p-0">
+<a class="site-logo site-title" href="{{ url_for('pagina_inicial') }}">
+<img alt="Luxury Wheels" src="{{ url_for('static', filename='images/logo2.png') }}"/>
+<span class="logo-icon"><i class="flaticon-fire"></i></span>
+</a>
+<button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abrir o menu" class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+<span class="menu-toggle"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+<ul class="navbar-nav main-menu m-auto">
+<li><a href="{{ url_for('pagina_inicial') }}">Início</a></li>
+<li><a href="{{ url_for('lista_veiculos') }}">Veículos</a></li>
+<li><a href="{{ url_for('pagina_contactos') }}">Contactos</a></li>
+{% if utilizador_autenticado %}
+<li><a href="{{ url_for('lista_reservas') }}">As minhas reservas</a></li>
+<li><a href="{{ url_for('terminar_sessao') }}">Terminar sessão ({{ nome_utilizador }})</a></li>
+{% else %}
+<li><a href="{{ url_for('iniciar_sessao') }}">Iniciar sessão</a></li>
+<li><a href="{{ url_for('registar') }}">Registar-se</a></li>
+{% endif %}
+</ul>
+</div>
+</nav>
+</div>
+</div><!-- header-bottom end -->
+</header>
+<!-- header-section end -->
+
+{% block banner %}
+<!-- inner-page-banner start -->
+<!-- Faixa escura com o título da página. Tem de existir em TODAS as páginas:
+     o menu do tema é fixo, transparente e com texto branco, por isso só fica
+     legível por cima desta faixa escura. Cada página define o título
+     (bloco "titulo_banner") e o caminho de navegação (bloco "migalhas").
+     A página inicial substitui este bloco inteiro pelo seu próprio banner.
+     A imagem de fundo vai no atributo data-background: é daí que o main.js
+     do tema a lê (um style="background-image: ..." seria apagado por ele). -->
+<section class="inner-page-banner bg_img overlay-3" data-background="{{ url_for('static', filename='images/inner-page-bg.jpg') }}">
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+<h2 class="page-title">{% block titulo_banner %}Luxury Wheels{% endblock %}</h2>
+<ol class="page-list">
+<li><a href="{{ url_for('pagina_inicial') }}"><i class="fa fa-home"></i>Início</a></li>
+{% block migalhas %}{% endblock %}
+</ol>
+</div>
+</div>
+</div>
+</section>
+<!-- inner-page-banner end -->
+{% endblock %}
+
+<!-- Mensagens de feedback (flash): mostradas logo abaixo da faixa escura,
+     antes do conteúdo da página, para ficarem sempre visíveis. -->
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+{% if mensagens %}
+<div class="container mt-4 mensagens-feedback">
+{% for categoria, mensagem in mensagens %}
+<div class="alert alert-{{ 'danger' if categoria == 'erro' else 'success' }} alert-dismissible fade show" role="alert">
+{{ mensagem }}
+<button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% block conteudo %}{% endblock %}
+
+<!-- footer-section start -->
+<footer class="footer-section">
+<div class="footer-top pt-120 pb-120">
+<div class="container">
+<div class="row">
+<div class="col-lg-4 col-sm-8">
+<div class="footer-widget widget-about">
+<div class="widget-about-content">
+<a class="footer-logo" href="{{ url_for('pagina_inicial') }}"><img alt="Luxury Wheels" src="{{ url_for('static', filename='images/logo-footer.png') }}"/></a>
+<p>Luxury Wheels — o seu parceiro de aluguer de veículos, com uma frota variada e um processo de reserva simples e transparente.</p>
+</div>
+</div>
+</div>
+<div class="col-lg-4 col-sm-8">
+<div class="footer-widget widget-address">
+<h4 class="widget-title"><a href="{{ url_for('pagina_contactos') }}">contacte-nos</a></h4>
+<ul>
+<li><i class="fa fa-map-marker"></i><span>Avenida da Liberdade, 100, Lisboa</span></li>
+<li><i class="fa fa-envelope"></i><span>geral@luxurywheels.pt</span></li>
+<li><i class="fa fa-phone-square"></i><span>+351 999 999 999</span></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<!-- footer-section end -->
+
+<!-- jquery js link -->
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-migrate-3.0.0.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lightcase.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+<!-- O jQuery UI tem de vir ANTES do calendário (datepicker.min.js): as duas
+     bibliotecas usam o nome "datepicker" e a última a ser carregada substitui
+     a outra. No template original vinha depois, e o calendário do tema
+     (Air Datepicker) nunca chegava a funcionar. -->
+<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datepicker.en.js') }}"></script>
+<!-- Tradução do calendário para português (ficheiro do projeto, mesmo formato do datepicker.en.js) -->
+<script src="{{ url_for('static', filename='js/datepicker.pt.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wickedpicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<!-- código JavaScript próprio do projeto (ex.: botão para mostrar a password) -->
+<script src="{{ url_for('static', filename='js/luxury_wheels.js') }}"></script>
+{% block scripts_extra %}{% endblock %}
+</body>
+</html>

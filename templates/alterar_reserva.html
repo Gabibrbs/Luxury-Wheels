@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block titulo %}Alterar reserva n.º {{ reserva.id_reserva }} — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Alterar reserva{% endblock %}
+{% block migalhas %}<li><a href="{{ url_for('lista_reservas') }}">As minhas reservas</a></li><li>Reserva n.º {{ reserva.id_reserva }}</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row">
+
+<!-- Coluna da esquerda: reserva atual -->
+<div class="col-lg-6 mb-4">
+<img class="img-fluid mb-4" src="{{ url_for('static', filename='images/' ~ veiculo.imagem) }}" alt="{{ veiculo.marca }} {{ veiculo.modelo }}"/>
+<h3>{{ veiculo.marca }} {{ veiculo.modelo }}</h3>
+<p>Levantamento atual: <strong>{{ reserva.data_inicio|data_pt }}</strong> às {{ reserva.hora_levantamento }} — {{ reserva.nome_balcao_levantamento }}<br/>
+Entrega atual: <strong>{{ reserva.data_fim|data_pt }}</strong> às {{ reserva.hora_entrega }} — {{ reserva.nome_balcao_entrega }}<br/>
+Valor pago: <strong>{{ "%.2f"|format(reserva.valor_total) }} €</strong></p>
+<p class="small">Só é possível alterar as datas e as horas. Para mudar de veículo, de balcão ou de extras, cancele esta reserva (com reembolso total) e faça uma nova.</p>
+</div>
+
+<!-- Coluna da direita: condições e formulário -->
+<div class="col-lg-6">
+<div class="alert alert-info">
+<strong>As novas datas seguem as mesmas condições de uma reserva nova:</strong>
+máximo de {{ duracao_maxima }} dias; início até à próxima revisão ({{ veiculo.data_proxima_revisao|data_pt }});
+fim até ao fim da validade da legalização ({{ validade_legalizacao|data_pt }}).
+Se o novo valor for maior, paga a diferença; se for menor, a diferença é reembolsada.
+</div>
+
+<!-- Os campos de data usam o calendário do tema (classe "datepicker-here"),
+     em português e no formato dd/mm/aaaa (atributo data-language="pt") -->
+<form method="post" action="{{ url_for('alterar_reserva', id_reserva=reserva.id_reserva) }}">
+<div class="frm-group">
+<label for="data_inicio">Nova data de início</label>
+<input id="data_inicio" name="data_inicio" type="text" class="datepicker-here" data-language="pt" data-auto-close="true" placeholder="dd/mm/aaaa" autocomplete="off" value="{{ data_inicio }}" required/>
+</div>
+<div class="frm-group">
+<label for="hora_levantamento">Nova hora de levantamento</label>
+<select id="hora_levantamento" name="hora_levantamento">
+{% for hora in horas %}
+<option value="{{ hora }}" {% if hora == hora_levantamento %}selected{% endif %}>{{ hora }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="frm-group">
+<label for="data_fim">Nova data de fim</label>
+<input id="data_fim" name="data_fim" type="text" class="datepicker-here" data-language="pt" data-auto-close="true" placeholder="dd/mm/aaaa" autocomplete="off" value="{{ data_fim }}" required/>
+</div>
+<div class="frm-group">
+<label for="hora_entrega">Nova hora de entrega</label>
+<select id="hora_entrega" name="hora_entrega">
+{% for hora in horas %}
+<option value="{{ hora }}" {% if hora == hora_entrega %}selected{% endif %}>{{ hora }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="frm-group">
+<input type="submit" value="continuar"/>
+</div>
+</form>
+<p class="mt-3"><a href="{{ url_for('lista_reservas') }}">&larr; Voltar às minhas reservas</a></p>
+</div>
+
+</div>
+</div>
+</section>
+{% endblock %}

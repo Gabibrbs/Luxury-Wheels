@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "macros.html" import escolha_cartao %}
+
+{% block titulo %}Confirmar alteração — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Confirmar alteração{% endblock %}
+{% block migalhas %}<li><a href="{{ url_for('lista_reservas') }}">As minhas reservas</a></li><li>Reserva n.º {{ reserva.id_reserva }}</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row">
+
+<!-- Resumo: datas atuais, novas datas e diferença de valor -->
+<div class="col-lg-5 mb-4">
+<h4>Resumo da alteração</h4>
+<table class="table">
+<tr><th>Veículo</th><td>{{ veiculo.marca }} {{ veiculo.modelo }}</td></tr>
+<tr><th>Datas atuais</th><td>{{ reserva.data_inicio|data_pt }} {{ reserva.hora_levantamento }} a {{ reserva.data_fim|data_pt }} {{ reserva.hora_entrega }}</td></tr>
+<tr><th>Novas datas</th><td><strong>{{ data_inicio|data_pt }} {{ hora_levantamento }} a {{ data_fim|data_pt }} {{ hora_entrega }}</strong></td></tr>
+<tr><th>Número de dias</th><td>{{ alteracao.numero_dias }}</td></tr>
+<tr><th>Quilómetros incluídos</th><td>{{ alteracao.km_incluidos }} km</td></tr>
+<tr><th>Diárias</th><td>{{ "%.2f"|format(alteracao.valor_diarias) }} €</td></tr>
+{% for linha in alteracao.linhas_extras %}
+<tr><th>{{ linha.nome }}</th><td>{{ linha.descricao }} = {{ "%.2f"|format(linha.subtotal) }} €</td></tr>
+{% endfor %}
+<tr><th>Novo valor total</th><td>{{ "%.2f"|format(alteracao.valor_total) }} €</td></tr>
+<tr><th>Valor já pago</th><td>{{ "%.2f"|format(alteracao.valor_pago) }} €</td></tr>
+<tr><th>{% if alteracao.diferenca > 0 %}Diferença a pagar{% elif alteracao.diferenca < 0 %}Diferença a reembolsar{% else %}Diferença{% endif %}</th>
+<td><strong>{{ "%.2f"|format(alteracao.diferenca|abs) }} €</strong></td></tr>
+</table>
+{% if alteracao.revisao_durante_aluguer %}
+<div class="alert alert-warning">
+<strong>Atenção:</strong> a próxima revisão deste veículo está marcada para
+{{ alteracao.data_proxima_revisao|data_pt }}, durante o seu aluguer. A revisão terá de ser tratada pelo cliente, mas todos os custos são suportados pela Luxury Wheels.
+</div>
+{% endif %}
+</div>
+
+<div class="col-lg-7">
+<form method="post" action="{{ url_for('confirmar_alteracao', id_reserva=reserva.id_reserva) }}">
+<!-- As novas datas seguem escondidas e são validadas outra vez ao confirmar -->
+<input type="hidden" name="data_inicio" value="{{ data_inicio.isoformat() }}"/>
+<input type="hidden" name="data_fim" value="{{ data_fim.isoformat() }}"/>
+<input type="hidden" name="hora_levantamento" value="{{ hora_levantamento }}"/>
+<input type="hidden" name="hora_entrega" value="{{ hora_entrega }}"/>
+
+{% if alteracao.diferenca > 0 %}
+<h4>Pagamento da diferença</h4>
+{{ escolha_cartao(formas_pagamento, escolha_pagamento, nome_titular, guardar_cartao) }}
+<div class="frm-group">
+<input type="submit" value="pagar a diferença ({{ '%.2f'|format(alteracao.diferenca) }} €) e alterar"/>
+</div>
+<p class="small">Pagamento simulado para efeitos do projeto: nenhum valor é cobrado.</p>
+
+{% elif alteracao.diferenca < 0 %}
+<h4>Reembolso da diferença</h4>
+<p>O novo período é mais barato. A diferença é devolvida aos cartões usados para pagar esta reserva:</p>
+<ul>
+{% for reembolso in alteracao.reembolsos %}
+<li>{{ "%.2f"|format(reembolso.valor) }} € para o cartão terminado em {{ reembolso.ultimos_digitos }}</li>
+{% endfor %}
+</ul>
+<div class="frm-group">
+<input type="submit" value="confirmar alteração"/>
+</div>
+
+{% else %}
+<h4>Sem diferença de valor</h4>
+<p>O novo período tem o mesmo valor: não há nada a pagar nem a reembolsar.</p>
+<div class="frm-group">
+<input type="submit" value="confirmar alteração"/>
+</div>
+{% endif %}
+</form>
+<p class="mt-3"><a href="{{ url_for('alterar_reserva', id_reserva=reserva.id_reserva, data_inicio=data_inicio.isoformat(), data_fim=data_fim.isoformat(), hora_levantamento=hora_levantamento, hora_entrega=hora_entrega) }}">&larr; Escolher outras datas</a></p>
+</div>
+
+</div>
+</div>
+</section>
+{% endblock %}

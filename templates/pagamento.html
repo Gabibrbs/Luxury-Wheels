@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "macros.html" import escolha_cartao %}
+
+{% block titulo %}Pagamento — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Pagamento{% endblock %}
+{% block migalhas %}<li><a href="{{ url_for('efetuar_aluguer', id_veiculo=veiculo.id_veiculo, **parametros) }}">{{ veiculo.marca }} {{ veiculo.modelo }}</a></li><li>Pagamento</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row">
+
+<!-- Resumo da reserva: o valor total é mostrado ANTES de pagar (requisito do enunciado) -->
+<div class="col-lg-5 mb-4">
+<h4>Resumo da reserva</h4>
+<table class="table">
+<tr><th>Veículo</th><td>{{ veiculo.marca }} {{ veiculo.modelo }}</td></tr>
+<tr><th>Levantamento</th><td>{{ pedido.data_inicio|data_pt }} às {{ pedido.hora_levantamento }}<br/>{{ pedido.balcao_levantamento.nome }}</td></tr>
+<tr><th>Entrega</th><td>{{ pedido.data_fim|data_pt }} às {{ pedido.hora_entrega }}<br/>{{ pedido.balcao_entrega.nome }}</td></tr>
+<tr><th>Número de dias</th><td>{{ resumo.numero_dias }}</td></tr>
+<tr><th>Diárias</th><td>{{ "%.2f"|format(veiculo.valor_diaria) }} € × {{ resumo.numero_dias }} = {{ "%.2f"|format(resumo.valor_diarias) }} €</td></tr>
+{% for linha in resumo.linhas_extras %}
+<tr><th>{{ linha.nome }}</th><td>{{ linha.descricao }} = {{ "%.2f"|format(linha.subtotal) }} €</td></tr>
+{% endfor %}
+<tr><th>Quilómetros incluídos</th><td>{{ resumo.km_incluidos }} km ({{ km_por_dia }} km/dia)</td></tr>
+<tr><th>Valor total</th><td><strong>{{ "%.2f"|format(resumo.valor_total) }} €</strong></td></tr>
+</table>
+{% if resumo.revisao_durante_aluguer %}
+<div class="alert alert-warning">
+<strong>Atenção:</strong> a próxima revisão deste veículo está marcada para
+{{ resumo.data_proxima_revisao|data_pt }}, durante o seu aluguer. A revisão terá de ser tratada pelo cliente, mas todos os custos são suportados pela Luxury Wheels.
+</div>
+{% endif %}
+</div>
+
+<!-- Forma de pagamento (simulada: nenhum valor é cobrado) -->
+<div class="col-lg-7">
+<h4>Forma de pagamento</h4>
+<form method="post" action="{{ url_for('pagamento', id_veiculo=veiculo.id_veiculo) }}">
+<!-- O pedido (datas, horas, balcões e extras) segue escondido no formulário
+     e é validado outra vez ao pagar; o valor total é sempre calculado no servidor -->
+{% for nome_campo, valor in parametros.items() %}
+{% if nome_campo == "extras" %}
+{% for id_extra in valor %}<input type="hidden" name="extras" value="{{ id_extra }}"/>{% endfor %}
+{% else %}
+<input type="hidden" name="{{ nome_campo }}" value="{{ valor }}"/>
+{% endif %}
+{% endfor %}
+
+{{ escolha_cartao(formas_pagamento, escolha_pagamento, nome_titular, guardar_cartao) }}
+
+<div class="frm-group">
+<input type="submit" value="concluir pagamento ({{ '%.2f'|format(resumo.valor_total) }} €)"/>
+</div>
+<p class="small">Pagamento simulado para efeitos do projeto: nenhum valor é cobrado.</p>
+</form>
+</div>
+
+</div>
+</div>
+</section>
+{% endblock %}

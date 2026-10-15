@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}As minhas reservas — Luxury Wheels{% endblock %}
+{% block titulo_banner %}As minhas reservas{% endblock %}
+{% block migalhas %}<li>As minhas reservas</li>{% endblock %}
+
+{% block conteudo %}
+{# Cor da etiqueta de cada estado (classes "badge" do Bootstrap, incluído no tema) #}
+{% set cores_estados = {"Futura": "primary", "A decorrer": "success", "Terminada": "secondary", "Cancelada": "danger"} %}
+<section class="pt-120 pb-120">
+<div class="container">
+
+{% for reserva in reservas_cliente %}
+<div class="reserva-cartao mb-4">
+<div class="row">
+
+<div class="col-md-3 mb-3">
+<img class="img-fluid" src="{{ url_for('static', filename='images/' ~ reserva.imagem) }}" alt="{{ reserva.marca }} {{ reserva.modelo }}"/>
+</div>
+
+<div class="col-md-5 mb-3">
+<h4>{{ reserva.marca }} {{ reserva.modelo }}
+<span class="badge badge-{{ cores_estados[reserva.estado_mostrado] }} ml-2">{{ reserva.estado_mostrado }}</span>
+</h4>
+<p class="mb-1">Reserva n.º {{ reserva.id_reserva }}</p>
+<p class="mb-1">Levantamento: <strong>{{ reserva.data_inicio|data_pt }}</strong> às {{ reserva.hora_levantamento }} — {{ reserva.nome_balcao_levantamento }}</p>
+<p class="mb-1">Entrega: <strong>{{ reserva.data_fim|data_pt }}</strong> às {{ reserva.hora_entrega }} — {{ reserva.nome_balcao_entrega }} ({{ reserva.numero_dias }} dia(s))</p>
+{% if reserva.extras %}<p class="mb-1">Extras: {% for extra in reserva.extras %}{{ extra.nome }}{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+<p class="mb-1">Valor da reserva: <strong>{{ "%.2f"|format(reserva.valor_total) }} €</strong>{% if reserva.estado_mostrado == "Cancelada" %} (reembolsado){% endif %}</p>
+</div>
+
+<div class="col-md-4 mb-3">
+<p class="mb-1"><strong>Pagamentos e reembolsos</strong></p>
+<ul class="lista-movimentos small">
+{% for movimento in reserva.movimentos %}
+<li>{{ movimento.data_movimento|data_pt }} — {{ nomes_movimentos[movimento.tipo] }}:
+{% if movimento.tipo == "reembolso" %}−{% endif %}{{ "%.2f"|format(movimento.valor) }} €
+(cartão terminado em {{ movimento.ultimos_digitos }})</li>
+{% endfor %}
+</ul>
+{% if reserva.pode_alterar %}
+<a class="cmn-btn mr-2 mt-2" href="{{ url_for('alterar_reserva', id_reserva=reserva.id_reserva) }}">Alterar datas</a>
+<a class="mt-2 d-inline-block" href="{{ url_for('cancelar_reserva', id_reserva=reserva.id_reserva) }}">Cancelar reserva</a>
+{% elif reserva.estado_mostrado == "A decorrer" %}
+<p class="small mt-2">Esta reserva já começou: só é possível alterar ou cancelar antes da data de início.</p>
+{% endif %}
+</div>
+
+</div>
+</div>
+{% else %}
+<p>Ainda não fez nenhuma reserva.</p>
+<a class="cmn-btn" href="{{ url_for('lista_veiculos') }}">Ver veículos disponíveis</a>
+{% endfor %}
+
+</div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+/*
+  Estilos próprios do website Luxury Wheels (Projeto Final).
+  Complementam o tema original (main.css) sem o alterar.
+*/
+
+/* --- Campo de password com botão "olho" para mostrar/esconder ------------ */
+
+/* O contentor serve de referência para posicionar o botão dentro do campo */
+.campo-password {
+    position: relative;
+}
+
+/* Espaço à direita do texto, para não ficar escondido por baixo do ícone */
+.campo-password input {
+    padding-right: 50px;
+}
+
+.campo-password .botao-mostrar-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    color: #777777;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.campo-password .botao-mostrar-password:hover,
+.campo-password .botao-mostrar-password:focus {
+    color: #da1c36;  /* vermelho do tema */
+}
+
+/* --- Mensagens de feedback (flash) --------------------------------------- */
+
+.mensagens-feedback .alert {
+    text-align: left;
+}
+
+/* Fase 4 — opções de pagamento (radio): o tema dá largura total a todos os
+   <input> dentro de .frm-group; aqui o círculo fica ao lado do texto. */
+.opcao-pagamento {
+    display: flex;
+    align-items: center;
+}
+.opcao-pagamento input[type="radio"] {
+    width: auto;
+    height: auto;
+    margin: 0 10px 0 0;
+}
+.opcao-pagamento label {
+    margin: 0;
+}
+
+/* Fase 5 — "As minhas reservas": cada reserva num cartão com contorno */
+.reserva-cartao {
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+    padding: 20px;
+}
+.lista-movimentos {
+    padding-left: 18px;
+    list-style: disc;
+}
+
+/* Fase 5 — as fotografias do tema têm tamanhos diferentes: todas ficam com
+   a mesma altura, cortadas ao centro, para os cartões ficarem alinhados. */
+.car-item .thumb img,
+.reserva-cartao img {
+    height: 200px;
+    object-fit: cover;
+}
+.reserva-cartao img {
+    height: 140px;
+    width: 100%;
+}
+
+/* Os dados do cartão novo só aparecem quando a opção "Usar um cartão novo"
+   (#forma_novo) está escolhida. Feito só com CSS: o seletor :has() verifica
+   se o bloco .escolha-cartao "tem" o botão #forma_novo marcado. */
+.escolha-cartao .dados-cartao-novo {
+    display: none;
+}
+.escolha-cartao:has(#forma_novo:checked) .dados-cartao-novo {
+    display: block;
+}

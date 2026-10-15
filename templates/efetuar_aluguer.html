@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block titulo %}Efetuar aluguer — {{ veiculo.marca }} {{ veiculo.modelo }} — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Efetuar aluguer{% endblock %}
+{% block migalhas %}<li>{{ veiculo.marca }} {{ veiculo.modelo }}</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row">
+
+<!-- Coluna da esquerda: imagem e informação do veículo -->
+<div class="col-lg-6 mb-4">
+<img class="img-fluid mb-4" src="{{ url_for('static', filename='images/' ~ veiculo.imagem) }}" alt="{{ veiculo.marca }} {{ veiculo.modelo }}"/>
+<h3>{{ veiculo.marca }} {{ veiculo.modelo }}</h3>
+<p class="price"><strong>{{ "%.2f"|format(veiculo.valor_diaria) }} € por dia</strong></p>
+<ul class="details-list">
+<li><i class="fa fa-car"></i> {{ veiculo.categoria }} · {{ veiculo.tipo_veiculo }}</li>
+<li><i class="fa fa-sliders"></i> {{ veiculo.transmissao }}</li>
+<li><i class="fa fa-users"></i> Até {{ veiculo.quantidade_pessoas }} pessoas</li>
+<li><i class="fa fa-wrench"></i> Próxima revisão: {{ veiculo.data_proxima_revisao|data_pt }}</li>
+<li><i class="fa fa-file-text"></i> Legalização válida até: {{ validade_legalizacao|data_pt }}</li>
+</ul>
+</div>
+
+<!-- Coluna da direita: condições e formulário -->
+<div class="col-lg-6">
+
+<div class="alert alert-info">
+<strong>Condições do aluguer</strong>
+<ul class="mb-0 mt-2">
+<li>Máximo de {{ duracao_maxima }} dias por aluguer. Para períodos mais longos, <a href="{{ url_for('pagina_contactos') }}">contacte-nos</a> para um contrato especial.</li>
+<li>Inclui {{ km_por_dia }} km por dia. A Luxury Wheels acompanha a quilometragem dos veículos remotamente.</li>
+<li>O aluguer tem de começar até à data da próxima revisão. Se a revisão calhar durante o aluguer, terá de ser tratada pelo cliente, mas todos os custos da revisão são suportados pela Luxury Wheels.</li>
+<li>O aluguer tem de terminar dentro da validade da legalização do veículo.</li>
+<li>O dia de início e o dia de fim contam ambos como dias de aluguer (as horas não mudam o preço).</li>
+<li>Pode entregar o veículo num balcão diferente do de levantamento, sem custo adicional.</li>
+</ul>
+</div>
+
+<!-- Os campos de data usam o calendário do tema (classe "datepicker-here"),
+     em português e no formato dd/mm/aaaa (atributo data-language="pt") -->
+<form method="post" action="{{ url_for('efetuar_aluguer', id_veiculo=veiculo.id_veiculo) }}">
+<h5 class="mt-2">Levantamento</h5>
+<div class="row">
+<div class="col-sm-6 frm-group">
+<label for="data_inicio">Data</label>
+<input id="data_inicio" name="data_inicio" type="text" class="datepicker-here" data-language="pt" data-auto-close="true" placeholder="dd/mm/aaaa" autocomplete="off" value="{{ data_inicio }}" required/>
+</div>
+<div class="col-sm-6 frm-group">
+<label for="hora_levantamento">Hora</label>
+<select id="hora_levantamento" name="hora_levantamento">
+{% for hora in horas %}
+<option value="{{ hora }}" {% if hora == dados.hora_levantamento %}selected{% endif %}>{{ hora }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="col-12 frm-group">
+<label for="balcao_levantamento">Balcão</label>
+<select id="balcao_levantamento" name="balcao_levantamento">
+{% for balcao in balcoes %}
+<option value="{{ balcao.id_balcao }}" {% if balcao.id_balcao|string == dados.balcao_levantamento %}selected{% endif %}>{{ balcao.nome }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<h5 class="mt-2">Entrega</h5>
+<div class="row">
+<div class="col-sm-6 frm-group">
+<label for="data_fim">Data</label>
+<input id="data_fim" name="data_fim" type="text" class="datepicker-here" data-language="pt" data-auto-close="true" placeholder="dd/mm/aaaa" autocomplete="off" value="{{ data_fim }}" required/>
+</div>
+<div class="col-sm-6 frm-group">
+<label for="hora_entrega">Hora</label>
+<select id="hora_entrega" name="hora_entrega">
+{% for hora in horas %}
+<option value="{{ hora }}" {% if hora == dados.hora_entrega %}selected{% endif %}>{{ hora }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="col-12 frm-group">
+<label for="balcao_entrega">Balcão</label>
+<select id="balcao_entrega" name="balcao_entrega">
+{% for balcao in balcoes %}
+<option value="{{ balcao.id_balcao }}" {% if balcao.id_balcao|string == dados.balcao_entrega %}selected{% endif %}>{{ balcao.nome }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<h5 class="mt-2">Extras</h5>
+{% for extra in extras %}
+<div class="frm-group">
+<input id="extra_{{ extra.id_extra }}" name="extras" type="checkbox" value="{{ extra.id_extra }}" {% if extra.id_extra|string in dados.extras %}checked{% endif %}/>
+<label for="extra_{{ extra.id_extra }}">{{ extra.nome }} —
+{% if extra.tipo_preco == "por_dia" %}{{ "%.2f"|format(extra.preco) }} € por dia{% else %}{{ "%.2f"|format(extra.preco) }} € (valor fixo){% endif %}</label>
+</div>
+{% endfor %}
+
+<div class="frm-group mt-3">
+<input type="submit" value="continuar para o pagamento"/>
+</div>
+</form>
+<p class="mt-3"><a href="{{ url_for('lista_veiculos') }}">&larr; Voltar à lista de veículos</a></p>
+</div>
+
+</div>
+</div>
+</section>
+{% endblock %}

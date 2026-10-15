@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo_password %}
+
+{% block titulo %}Iniciar sessão — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Iniciar sessão{% endblock %}
+{% block migalhas %}<li>Iniciar sessão</li>{% endblock %}
+
+{% block conteudo %}
+<!-- login-section start -->
+<section class="login-section pt-120 pb-120">
+<div class="container">
+<div class="row">
+<div class="col-lg-12">
+<div class="login-block text-center">
+<div class="login-block-inner">
+<h3 class="title">inicie sessão na sua conta</h3>
+<form class="login-form" method="post" action="{{ url_for('iniciar_sessao') }}">
+<!-- Botões de redes sociais: apenas demonstrativos (ver página login_social) -->
+<div class="frm-group text-center">
+<a class="facebook" href="{{ url_for('login_social', rede='facebook', proximo=proximo) }}">Facebook</a>
+<a class="google" href="{{ url_for('login_social', rede='google', proximo=proximo) }}">Google</a>
+<a class="twitter" href="{{ url_for('login_social', rede='x', proximo=proximo) }}">X</a>
+</div>
+<div class="frm-group text-center">
+<span class="or">ou</span>
+</div>
+<!-- Guarda a página para onde o cliente deve voltar depois do login -->
+<input type="hidden" name="proximo" value="{{ proximo }}"/>
+<div class="frm-group">
+<input id="utilizador" name="utilizador" placeholder="Nome de utilizador" type="text" value="{{ utilizador or '' }}" required autofocus/>
+</div>
+{{ campo_password("password", "Password") }}
+<div class="frm-group">
+<input type="submit" value="iniciar sessão"/>
+</div>
+</form>
+<p>
+<a href="{{ url_for('registar', proximo=proximo) }}">Ainda não tem conta? Registe-se</a>
+<a href="{{ url_for('recuperar_password') }}">Esqueceu-se da password?</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- login-section end -->
+{% endblock %}

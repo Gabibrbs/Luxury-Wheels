@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo_password %}
+
+{% block titulo %}Registo — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Criar nova conta{% endblock %}
+{% block migalhas %}<li>Registo</li>{% endblock %}
+
+{% block conteudo %}
+<!-- registration-section start -->
+<section class="registration-section pt-120 pb-120">
+<div class="container">
+<div class="row">
+<div class="col-lg-12">
+<div class="registration-block text-center">
+<div class="registration-block-inner">
+<h3 class="title">crie a sua conta</h3>
+<form class="registration-form" method="post" action="{{ url_for('registar') }}">
+<!-- Guarda a página para onde o cliente deve voltar depois do registo -->
+<input type="hidden" name="proximo" value="{{ proximo }}"/>
+<div class="frm-group">
+<input id="nome" name="nome" placeholder="Nome" type="text" value="{{ nome or '' }}" required/>
+</div>
+<div class="frm-group">
+<input id="utilizador" name="utilizador" placeholder="Nome de utilizador (3 a 20 caracteres, sem espaços)" type="text" value="{{ utilizador or '' }}" required/>
+</div>
+<div class="frm-group">
+<input id="email" name="email" placeholder="E-mail" type="email" value="{{ email or '' }}" required/>
+</div>
+{{ campo_password("password", "Password (mín. 8 caracteres, com letras e números)") }}
+{{ campo_password("confirmacao_password", "Confirme a password") }}
+<div class="frm-group">
+<input id="newsletter" name="newsletter" type="checkbox" value="sim" {% if quer_newsletter %}checked{% endif %}/>
+<label for="newsletter">Desejo subscrever a newsletter</label>
+</div>
+<div class="frm-group">
+<input type="submit" value="criar nova conta"/>
+</div>
+</form>
+<p class="text-left mt-3">
+Já tem conta? <a href="{{ url_for('iniciar_sessao', proximo=proximo) }}">Inicie sessão</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- registration-section end -->
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Reserva concluída — Luxury Wheels{% endblock %}
+{% block titulo_banner %}Reserva concluída{% endblock %}
+{% block migalhas %}<li>Reserva n.º {{ reserva.id_reserva }}</li>{% endblock %}
+
+{% block conteudo %}
+<section class="pt-120 pb-120">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<h3 class="mb-4">Obrigado! A sua reserva n.º {{ reserva.id_reserva }} está confirmada.</h3>
+<table class="table">
+<tr><th>Veículo</th><td>{{ reserva.marca }} {{ reserva.modelo }}</td></tr>
+<tr><th>Levantamento</th><td>{{ reserva.data_inicio|data_pt }} às {{ reserva.hora_levantamento }} — {{ reserva.nome_balcao_levantamento }}</td></tr>
+<tr><th>Entrega</th><td>{{ reserva.data_fim|data_pt }} às {{ reserva.hora_entrega }} — {{ reserva.nome_balcao_entrega }}</td></tr>
+<tr><th>Número de dias</th><td>{{ resumo.numero_dias }}</td></tr>
+<tr><th>Diárias</th><td>{{ "%.2f"|format(resumo.valor_diarias) }} €</td></tr>
+{% for linha in resumo.linhas_extras %}
+<tr><th>{{ linha.nome }}</th><td>{{ linha.descricao }} = {{ "%.2f"|format(linha.subtotal) }} €</td></tr>
+{% endfor %}
+<tr><th>Quilómetros incluídos</th><td>{{ resumo.km_incluidos }} km</td></tr>
+<tr><th>Valor da reserva</th><td><strong>{{ "%.2f"|format(reserva.valor_total) }} €</strong></td></tr>
+<tr><th>Pagamento inicial com</th><td>Cartão terminado em {{ reserva.ultimos_digitos }} ({{ reserva.nome_titular }})</td></tr>
+</table>
+{% if resumo.revisao_durante_aluguer %}
+<div class="alert alert-warning">
+<strong>Lembrete:</strong> a revisão deste veículo está marcada para {{ resumo.data_proxima_revisao|data_pt }},
+durante o seu aluguer, e terá de ser tratada pelo cliente. Todos os custos da revisão são suportados pela Luxury Wheels.
+</div>
+{% endif %}
+<p class="mt-4">
+<a class="cmn-btn mr-3" href="{{ url_for('lista_reservas') }}">Ver as minhas reservas</a>
+<a href="{{ url_for('lista_veiculos') }}">&larr; Voltar aos veículos</a>
+</p>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}
