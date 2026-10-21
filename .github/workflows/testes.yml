@@ -1,0 +1,20 @@
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      # Descarrega o código do projeto
+      - uses: actions/checkout@v4
+      # Instala o Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # Instala o Flask
+      - run: pip install -r requirements.txt
+      # Corre os 173 testes automáticos (unittest)
+      - run: python -m unittest discover testes -v
